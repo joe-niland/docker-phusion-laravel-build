@@ -1,7 +1,7 @@
 # Use phusion/baseimage as base image.
 # See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/baseimage:0.9.22
+FROM phusion/baseimage:0.10.1
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -29,7 +29,7 @@ RUN add-apt-repository -y ppa:ondrej/php && \
   apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C && \
   apt-get update && \
   apt-get -y upgrade && \
-  apt-get -y install nodejs npm supervisor wget git apache2 php-xdebug libapache2-mod-php5.6 php5.6 pwgen php5.6-apc php5.6-mcrypt php5.6-gd php5.6-xml php5.6-mbstring php5.6-curl php5.6-dev php5.6-sybase freetds-common libsybdb5 php5.6-gettext zip unzip php5.6-zip jq openssh-client && \
+  apt-get -y install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug libapache2-mod-php5.6 php5.6 pwgen php5.6-apc php5.6-mcrypt php5.6-gd php5.6-xml php5.6-mbstring php5.6-curl php5.6-dev php5.6-sybase freetds-common libsybdb5 php5.6-gettext zip unzip php5.6-zip jq openssh-client && \
   npm install -g --silent n \
           gulp-cli \
           bower \
