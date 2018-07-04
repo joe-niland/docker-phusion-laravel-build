@@ -26,14 +26,12 @@ RUN groupmod -g ${BOOT2DOCKER_GID} staff
 # Install packages
 ENV DEBIAN_FRONTEND noninteractive
 RUN add-apt-repository -y ppa:ondrej/php && \
-  apt-key adv --keyserver keyserver.ubuntu.com --recv-keys 4F4EA0AAE5267A6C && \
   apt-get update && \
   apt-get -y upgrade && \
-  apt-get -y install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug libapache2-mod-php5.6 php5.6 pwgen php5.6-apc php5.6-mcrypt php5.6-gd php5.6-xml php5.6-mbstring php5.6-curl php5.6-dev php5.6-sybase freetds-common libsybdb5 php5.6-gettext zip unzip php5.6-zip jq openssh-client && \
-  npm install -g --silent n \
-          gulp-cli \
-          bower \
-          yarn && \
+  apt-get -y install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug libapache2-mod-php7.2 php7.2 pwgen php7.2-apc \
+  php7.2-gd php7.2-xml php7.2-mbstring php7.2-curl php7.2-dev php7.2-sybase freetds-common libsybdb5 php7.2-gettext zip unzip php7.2-zip jq \
+  openssh-client && \
+  npm install -g --silent n gulp-cli yarn && \
   n stable && \
   yarn global add node-sass && \
   ln -sf /usr/local/n/versions/node/8.2.1/bin/node /usr/bin/node && \
@@ -43,12 +41,12 @@ RUN add-apt-repository -y ppa:ondrej/php && \
   echo "text size = 20971520" >> /etc/freetds/freetds.conf && \
   echo "client charset = UTF-8" >> /etc/freetds/freetds.conf
 
-# Update CLI PHP to use 5.6
-RUN ln -sfn /usr/bin/php5.6 /etc/alternatives/php
+# Update CLI PHP to use 7.2
+RUN ln -sfn /usr/bin/php7.2 /etc/alternatives/php
 
 # Set PHP timezones to Australia/Sydney
-RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/5.6/apache2/php.ini
-RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/5.6/cli/php.ini
+RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.2/apache2/php.ini
+RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.2/cli/php.ini
 
 # Add composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
