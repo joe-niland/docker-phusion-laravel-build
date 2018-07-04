@@ -28,8 +28,10 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update && \
   apt-get -y upgrade && \
-  apt-get -y install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug libapache2-mod-php7.2 php7.2 pwgen php7.2-apc \
-  php7.2-gd php7.2-xml php7.2-mbstring php7.2-curl php7.2-dev php7.2-sybase freetds-common libsybdb5 php7.2-gettext zip unzip php7.2-zip jq \
+  apt-get -y install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug \
+  libapache2-mod-php7.2 php7.2 pwgen php7.2-apc \
+  php7.2-gd php7.2-xml php7.2-mbstring php7.2-curl php7.2-dev php7.2-sybase \
+  freetds-common libsybdb5 php7.2-mysql php7.2-gettext zip unzip php7.2-zip jq \
   openssh-client && \
   npm install -g --silent n gulp-cli yarn && \
   n stable && \
