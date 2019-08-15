@@ -35,7 +35,7 @@ RUN add-apt-repository -y ppa:ondrej/php && \
   jq openssh-client && \
   npm install -g --silent n gulp-cli yarn && \
   n stable && \
-  yarn global add node-sass && \
+  yarn global add node-sass@4.12.0 && \
   ln -sf /usr/local/n/versions/node/8.2.1/bin/node /usr/bin/node && \
   echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
   echo "[global]" > /etc/freetds/freetds.conf && \
