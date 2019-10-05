@@ -1,10 +1,11 @@
 # docker-phusion-laravel-build
-Laravel CI environment
+
+Laravel CI environment based on the Phusion Ubuntu image.
 
 To build:
 docker build -t joeniland/phusion-laravel-build .
 
-To run Unit tests
+To run Unit tests:
 docker run -it --volume=/dev/my-project:/app --workdir="/app" joeniland/phusion-laravel-build phpunit
 
 Where volume = project root

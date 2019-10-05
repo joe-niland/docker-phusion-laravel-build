@@ -1,7 +1,7 @@
 # Use phusion/baseimage as base image.
 # See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/baseimage:0.10.1
+FROM phusion/baseimage:latest-amd64
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -28,27 +28,30 @@ ENV DEBIAN_FRONTEND noninteractive
 RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update && \
   apt-get -y upgrade && \
-  apt-get -y install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug \
-  libapache2-mod-php7.2 php7.2 pwgen php7.2-apc \
-  php7.2-gd php7.2-xml php7.2-mbstring php7.2-curl php7.2-dev php7.2-sybase php7.2-gmp \
-  freetds-common libsybdb5 php7.2-mysql php7.2-gettext zip unzip php7.2-zip \
-  jq openssh-client && \
-  npm install -g --silent n gulp-cli yarn && \
-  n stable && \
-  yarn global add node-sass@4.12.0 && \
-  ln -sf /usr/local/n/versions/node/8.2.1/bin/node /usr/bin/node && \
-  echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
-  echo "[global]" > /etc/freetds/freetds.conf && \
-  echo "tds version = 8.0" >> /etc/freetds/freetds.conf && \
-  echo "text size = 20971520" >> /etc/freetds/freetds.conf && \
-  echo "client charset = UTF-8" >> /etc/freetds/freetds.conf
+  DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates \
+  supervisor wget git apache2 php-xdebug \
+  libapache2-mod-php7.3 php7.3 pwgen php7.3-apc \
+  php7.3-gd php7.3-xml php7.3-mbstring php7.3-curl php7.3-dev php7.3-sybase php7.3-gmp \
+  freetds-common libsybdb5 php7.3-mysql php7.3-gettext zip unzip php7.3-zip \
+  jq openssh-client
+RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+    apt-get update && apt-get install -y nodejs && \
+    npm install -g --silent n gulp-cli yarn && \
+    n lts && \
+    yarn global add node-sass@4.12.0 && \
+    ln -sf /usr/local/n/versions/node/8.2.1/bin/node /usr/bin/node && \
+    echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
+    echo "[global]" > /etc/freetds/freetds.conf && \
+    echo "tds version = 8.0" >> /etc/freetds/freetds.conf && \
+    echo "text size = 20971520" >> /etc/freetds/freetds.conf && \
+    echo "client charset = UTF-8" >> /etc/freetds/freetds.conf
 
-# Update CLI PHP to use 7.2
-RUN ln -sfn /usr/bin/php7.2 /etc/alternatives/php
+# Update CLI PHP to use 7.3
+RUN ln -sfn /usr/bin/php7.3 /etc/alternatives/php
 
 # Set PHP timezones to Australia/Sydney
-RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.2/apache2/php.ini
-RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.2/cli/php.ini
+RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.3/apache2/php.ini
+RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.3/cli/php.ini
 
 # Add composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
