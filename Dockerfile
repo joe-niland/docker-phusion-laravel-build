@@ -30,6 +30,7 @@ RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get -y upgrade && \
   DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates \
   supervisor wget git apache2 php-xdebug \
+  libpng-dev \
   libapache2-mod-php7.3 php7.3 pwgen php7.3-apc \
   php7.3-gd php7.3-xml php7.3-mbstring php7.3-curl php7.3-dev php7.3-sybase php7.3-gmp \
   freetds-common libsybdb5 php7.3-mysql php7.3-gettext zip unzip php7.3-zip \
