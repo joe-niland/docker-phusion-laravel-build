@@ -25,7 +25,7 @@ RUN groupmod -g ${BOOT2DOCKER_GID} staff
 
 # Install packages
 ENV DEBIAN_FRONTEND=noninteractive\
-    UCF_FORCE_CONFNEW=1
+    UCF_FORCE_CONFFNEW=1
 RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update && \
   apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
