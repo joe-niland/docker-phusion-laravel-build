@@ -24,11 +24,12 @@ RUN groupmod -g $(($BOOT2DOCKER_GID + 10000)) $(getent group $BOOT2DOCKER_GID | 
 RUN groupmod -g ${BOOT2DOCKER_GID} staff
 
 # Install packages
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive\
+    UCF_FORCE_CONFFNEW=1
 RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update && \
-  apt-get -y upgrade && \
-  DEBIAN_FRONTEND=noninteractive apt-get -y install ca-certificates \
+  apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
+  apt-get -y -o Dpkg::Options::="--force-confold" apt-get -y install ca-certificates \
   supervisor wget git apache2 php-xdebug \
   libpng-dev \
   libapache2-mod-php7.3 php7.3 pwgen php7.3-apc \
