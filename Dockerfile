@@ -1,7 +1,7 @@
 # Use phusion/baseimage as base image.
 # See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/baseimage:0.10.1
+FROM phusion/baseimage:0.10.2
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
@@ -24,12 +24,13 @@ RUN groupmod -g $(($BOOT2DOCKER_GID + 10000)) $(getent group $BOOT2DOCKER_GID | 
 RUN groupmod -g ${BOOT2DOCKER_GID} staff
 
 # Install packages
-ENV DEBIAN_FRONTEND noninteractive
+ENV DEBIAN_FRONTEND=noninteractive\
+    UCF_FORCE_CONFNEW=1
 RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update && \
-  apt-get -y upgrade && \
-  apt-get -y install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug \
-  libapache2-mod-php7.2 php7.2 pwgen php7.2-apc \
+  apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
+  apt-get -y -o Dpkg::Options::="--force-confold" install ca-certificates nodejs npm supervisor wget git apache2 php-xdebug \
+  libpng-dev libapache2-mod-php7.2 php7.2 pwgen php7.2-apc \
   php7.2-gd php7.2-xml php7.2-mbstring php7.2-curl php7.2-dev php7.2-sybase php7.2-gmp \
   freetds-common libsybdb5 php7.2-mysql php7.2-gettext zip unzip php7.2-zip \
   jq openssh-client && \
