@@ -29,8 +29,8 @@ ENV DEBIAN_FRONTEND=noninteractive\
 RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update && \
   apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
-  apt-get -y -o Dpkg::Options::="--force-confold" apt-get -y install ca-certificates \
-  supervisor wget git apache2 php-xdebug \
+  apt-get -y -o Dpkg::Options::="--force-confold" install ca-certificates \
+  supervisor wget git apache2 php-xdebug rsync \
   libpng-dev \
   libapache2-mod-php7.3 php7.3 pwgen php7.3-apc \
   php7.3-gd php7.3-xml php7.3-mbstring php7.3-curl php7.3-dev php7.3-sybase php7.3-gmp \
