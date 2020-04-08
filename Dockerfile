@@ -8,52 +8,35 @@ CMD ["/sbin/my_init"]
 
 # Install packages for Laravel and front-end build process
 
-ENV DOCKER_USER_ID 501 
-ENV DOCKER_USER_GID 20
-
-ENV BOOT2DOCKER_ID 1000
-ENV BOOT2DOCKER_GID 50
-
-# Tweaks to give Apache/PHP write permissions to the app
-RUN usermod -u ${BOOT2DOCKER_ID} www-data && \
-    usermod -G staff www-data && \
-    useradd -r mysql && \
-    usermod -G staff mysql
-
-RUN groupmod -g $(($BOOT2DOCKER_GID + 10000)) $(getent group $BOOT2DOCKER_GID | cut -d: -f1)
-RUN groupmod -g ${BOOT2DOCKER_GID} staff
-
 # Install packages
 ENV DEBIAN_FRONTEND=noninteractive\
-    UCF_FORCE_CONFFNEW=1
+    UCF_FORCE_CONFFNEW=1\
+    NODE_VERSION=10\
+    PHP_TIMEZONE=Australia\/Sydney
+
 RUN add-apt-repository -y ppa:ondrej/php && \
   apt-get update && \
   apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
   apt-get -y -o Dpkg::Options::="--force-confold" install ca-certificates \
-  supervisor wget git apache2 php-xdebug rsync \
+  supervisor wget git php-xdebug rsync \
   libpng-dev \
-  libapache2-mod-php7.3 php7.3 pwgen php7.3-apc \
-  php7.3-gd php7.3-xml php7.3-mbstring php7.3-curl php7.3-dev php7.3-sybase php7.3-gmp \
-  freetds-common libsybdb5 php7.3-mysql php7.3-gettext zip unzip php7.3-zip \
+  pwgen php7.4-cli php7.4-common php7.4-apc \
+  php7.4-gd php7.4-xml php7.4-mbstring php7.4-curl php7.4-dev php7.4-sybase php7.4-gmp \
+  freetds-common libsybdb5 php7.4-mysql php7.4-gettext zip unzip php7.4-zip \
   jq openssh-client
-RUN curl -sL https://deb.nodesource.com/setup_12.x | bash - && \
+RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
     apt-get update && apt-get install -y nodejs && \
     npm install -g --silent n gulp-cli yarn && \
-    n lts && \
-    yarn global add node-sass@4.12.0 && \
-    ln -sf /usr/local/n/versions/node/8.2.1/bin/node /usr/bin/node && \
-    echo "ServerName localhost" >> /etc/apache2/apache2.conf && \
-    echo "[global]" > /etc/freetds/freetds.conf && \
-    echo "tds version = 8.0" >> /etc/freetds/freetds.conf && \
-    echo "text size = 20971520" >> /etc/freetds/freetds.conf && \
-    echo "client charset = UTF-8" >> /etc/freetds/freetds.conf
+    n ${NODE_VERSION} && \
+    PATH="$PATH" && \
+    npm -g i --unsafe-perm node-sass@4.12.0
 
-# Update CLI PHP to use 7.3
-RUN ln -sfn /usr/bin/php7.3 /etc/alternatives/php
+# Update CLI PHP to use 7.4
+RUN ln -sfn /usr/bin/php7.4 /etc/alternatives/php
 
 # Set PHP timezones to Australia/Sydney
-RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.3/apache2/php.ini
-RUN sed -i "s/;date.timezone =/date.timezone = Australia\/Sydney/g" /etc/php/7.3/cli/php.ini
+RUN sed -i "s?;date.timezone =?date.timezone = ${PHP_TIMEZONE}?g" /etc/php/7.4/cli/php.ini && \
+    phpdismod xdebug
 
 # Add composer
 RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
@@ -61,26 +44,12 @@ RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" &&
     php -r "unlink('composer-setup.php');" && \
     mv composer.phar /usr/local/bin/composer
 
-# We need Phpunit 5.7 for this to work
-RUN php -r "copy('https://phar.phpunit.de/phpunit-5.7.phar', 'phpunit');" && \
-    mv phpunit /usr/local/bin
-
-# Set Executable Bit for Phpunit
-RUN chmod +x /usr/local/bin/phpunit
-
-# Rewrite enable
-RUN a2enmod rewrite
-
-# Configure /app
-RUN mkdir -p /app && rm -fr /var/www/html && ln -s /app /var/www/html
-
-#Environment variables to configure php
-ENV PHP_UPLOAD_MAX_FILESIZE 10M
-ENV PHP_POST_MAX_SIZE 10M
+# Run composer and phpunit installation.
+RUN composer global require "phpunit/phpunit:~9.0.0" --prefer-source --no-interaction
+RUN ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
 
 # Add volumes for the app
 VOLUME  [ "/app" ]
-
 
 # Clean up APT when done.
 RUN apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
