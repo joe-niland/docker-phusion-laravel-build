@@ -1,21 +1,16 @@
 # docker-phusion-laravel-build
-Laravel CI environment
+
+Laravel CI environment based on the Phusion Ubuntu image.
 
 To build:
-docker build -t joeniland/phusion-laravel-build .
+`docker build -t joeniland/phusion-laravel-build .`
 
-To run Unit tests
-docker run -it --volume=/dev/my-project:/app --workdir="/app" joeniland/phusion-laravel-build phpunit
+To run Unit tests:
 
-Where volume = project root
+```shell
+cd /dev/my-project
+docker run -it --mount src=`pwd`,target=/app,type=bind joeniland/phusion-laravel-build:latest phpunit
+```
 
-PHPunit is run automatically and output should be:
-
-PHPUnit 5.7.21 by Sebastian Bergmann and contributors.
-
-.......                                                             7 / 7 (100%)
-
-Time: 4.56 seconds, Memory: 78.00MB
-
-OK (7 tests, 12 assertions)
+, where `/dev/my-project` is your project root.
 
