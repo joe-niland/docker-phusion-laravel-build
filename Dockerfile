@@ -40,19 +40,17 @@ RUN ln -sfn /usr/bin/php7.2 /etc/alternatives/php
 RUN sed -i "s?;date.timezone =?date.timezone = ${PHP_TIMEZONE}?g" /etc/php/7.2/cli/php.ini && \
     phpdismod xdebug
 
-# Add composer
-RUN php -r "copy('https://getcomposer.org/installer', 'composer-setup.php');" && \
-    php composer-setup.php && \
-    php -r "unlink('composer-setup.php');" && \
-    mv composer.phar /usr/local/bin/composer
+# Install composer and composer packages
+RUN curl -sS https://getcomposer.org/installer | php -- --install-dir=/usr/local/bin --filename=composer &&\
+    composer global require hirak/prestissimo &&\
+    composer global require "phpunit/phpunit:~8.0.0" --prefer-source --no-interaction &&\
+    ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
 
-# Run composer and phpunit installation.
-RUN composer global require "phpunit/phpunit:~8.0.0" --prefer-source --no-interaction
-RUN ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
+# RUN composer config --list --global
 
 # Add common host keys
-RUN touch /root/.ssh/known_hosts
-RUN ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts &&\
+RUN touch /root/.ssh/known_hosts &&\
+    ssh-keyscan bitbucket.org >> /root/.ssh/known_hosts &&\
     ssh-keyscan github.com >> /root/.ssh/known_hosts &&\
     ssh-keyscan gitlab.com >> /root/.ssh/known_hosts
 
