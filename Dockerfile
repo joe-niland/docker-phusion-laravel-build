@@ -8,7 +8,7 @@ CMD ["/sbin/my_init"]
 
 # Install packages for Laravel and front-end build process
 
-ENV DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 NODE_VERSION=10 NODE_SASS_VERSION=6.0.1 PHP_TIMEZONE=Australia\/Sydney
+ENV DEBIAN_FRONTEND=noninteractive UCF_FORCE_CONFFNEW=1 NODE_VERSION=14 NODE_SASS_VERSION=6.0.1 PHP_TIMEZONE=Australia\/Sydney
 
 # Install packages
 RUN add-apt-repository -y ppa:ondrej/php && \
