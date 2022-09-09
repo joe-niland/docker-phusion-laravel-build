@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION=14 \
     NODE_SASS_VERSION=6.0.1 \
     PHP_TIMEZONE=Australia\/Sydney \
-    PHP_VERSION=8.1
+    PHP_VERSION=7.4
 
 # Install packages
 RUN add-apt-repository -y ppa:ondrej/php && \
@@ -44,7 +44,7 @@ RUN sed -i "s?;date.timezone =?date.timezone = ${PHP_TIMEZONE}?g" /etc/php/$PHP_
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # phpunit
-RUN composer global require "phpunit/phpunit:~9.5" --prefer-dist --no-interaction && \
+RUN composer global require "phpunit/phpunit:~9.4" --prefer-dist --no-interaction && \
     ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
 
 # Add volumes for the app
