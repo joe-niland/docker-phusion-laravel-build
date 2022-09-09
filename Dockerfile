@@ -20,7 +20,7 @@ RUN add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
     apt-get -y -o Dpkg::Options::="--force-confold" install ca-certificates \
-    supervisor wget git libpng-dev \
+    libpng-dev \
     pwgen php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-apc \
     php$PHP_VERSION-gd php$PHP_VERSION-xml php$PHP_VERSION-mbstring php$PHP_VERSION-curl php$PHP_VERSION-dev \
     php$PHP_VERSION-sybase php$PHP_VERSION-gmp \
@@ -38,8 +38,7 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
 RUN ln -sfn /usr/bin/php$PHP_VERSION /etc/alternatives/php
 
 # Set PHP timezone
-RUN sed -i "s?;date.timezone =?date.timezone = ${PHP_TIMEZONE}?g" /etc/php/$PHP_VERSION/cli/php.ini && \
-    phpdismod xdebug
+RUN sed -i "s?;date.timezone =?date.timezone = ${PHP_TIMEZONE}?g" /etc/php/$PHP_VERSION/cli/php.ini
 
 # Get Composer bin from official image
 COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
