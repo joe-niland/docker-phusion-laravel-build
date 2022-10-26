@@ -25,7 +25,7 @@ RUN add-apt-repository -y ppa:ondrej/php && \
     php$PHP_VERSION-gd php$PHP_VERSION-xml php$PHP_VERSION-mbstring php$PHP_VERSION-curl php$PHP_VERSION-dev \
     php$PHP_VERSION-sybase php$PHP_VERSION-gmp \
     freetds-common libsybdb5 php$PHP_VERSION-mysql php$PHP_VERSION-gettext zip unzip php$PHP_VERSION-zip \
-    jq openssh-client
+    jq openssh-client git
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
     apt-get update && \
     apt-get install -y nodejs && \
