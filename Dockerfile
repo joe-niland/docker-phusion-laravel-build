@@ -13,7 +13,7 @@ ENV DEBIAN_FRONTEND=noninteractive \
     NODE_VERSION=14 \
     NODE_SASS_VERSION=6.0.1 \
     PHP_TIMEZONE=Australia\/Sydney \
-    PHP_VERSION=8.1
+    PHP_VERSION=8.2
 
 # Install packages
 RUN add-apt-repository -y ppa:ondrej/php && \
