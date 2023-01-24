@@ -35,7 +35,8 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
     npm -g i --unsafe-perm node-sass@$NODE_SASS_VERSION
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip &&  ./aws/install && rm -rf ./aws awscliv2.zip && \
-    curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh && rm get-docker.sh
+    curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh && rm get-docker.sh && \
+    apt-get install docker-compose-plugin
 
 # Update CLI PHP to use $PHP_VERSION
 RUN ln -sfn /usr/bin/php$PHP_VERSION /etc/alternatives/php
