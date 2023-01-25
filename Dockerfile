@@ -1,10 +1,12 @@
 # Use phusion/baseimage as base image.
 # See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/baseimage:focal-1.2.0
+# FROM phusion/baseimage:focal-1.2.0
+# FROM debian:bullseye-slim
+FROM ubuntu:focal
 
 # Use baseimage-docker's init system.
-CMD ["/sbin/my_init"]
+# CMD ["/sbin/my_init"]
 
 # Install packages for Laravel and front-end build process
 
@@ -16,12 +18,13 @@ ENV DEBIAN_FRONTEND=noninteractive \
     PHP_VERSION=8.2
 
 # Install packages
-RUN add-apt-repository -y ppa:ondrej/php && \
-    apt-get update && \
-    apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
-    apt-get -y -o Dpkg::Options::="--force-confold" install --no-install-recommends \
+RUN apt-get -qq update && apt-get -qq install -y software-properties-common && \
+    add-apt-repository -y ppa:ondrej/php && \
+    apt-get -qq update && \
+    apt-get -qq -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
+    apt-get -qq -y -o Dpkg::Options::="--force-confold" install --no-install-recommends \
     # docker
-    ca-certificates iptables openssl pigz xz-utils software-properties-common uidmap dbus-user-session \
+    ca-certificates iptables openssl pigz xz-utils uidmap dbus-user-session \
     # php
     libpng-dev \
     php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-apc \
@@ -33,9 +36,9 @@ RUN add-apt-repository -y ppa:ondrej/php && \
     # MySQL cli \
     mysql-client \
     # utils
-    pwgen jq openssh-client git rsync zip unzip
+    pwgen jq openssh-client git rsync zip unzip curl
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \ 
-    apt-get update && \
+    # apt-get update && \
     apt-get install -y nodejs && \
     npm install -g --silent n && \
     n ${NODE_VERSION} && \
@@ -70,6 +73,8 @@ RUN mkdir /certs /certs/client && chmod 1777 /certs /certs/client
 # Get docker executables from official dind image
 COPY --from=docker:20.10.23-dind /usr/local/bin/ /usr/local/bin/
 COPY --from=docker:20.10.23-dind /usr/libexec/docker/cli-plugins /usr/libexec/docker/cli-plugins
+
+COPY dockerd-entrypoint.sh /usr/local/bin/
 
 VOLUME /var/lib/docker
 
