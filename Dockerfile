@@ -19,24 +19,31 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
-    apt-get -y -o Dpkg::Options::="--force-confold" install ca-certificates \
+    apt-get -y -o Dpkg::Options::="--force-confold" install \
+    # docker
+    ca-certificates iptables openssl pigz xz-utils software-properties-common \
+    # php
     libpng-dev \
-    pwgen php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-apc \
+    php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-apc \
     php$PHP_VERSION-gd php$PHP_VERSION-xml php$PHP_VERSION-mbstring php$PHP_VERSION-curl php$PHP_VERSION-dev \
     php$PHP_VERSION-sybase php$PHP_VERSION-gmp \
-    freetds-common libsybdb5 php$PHP_VERSION-mysql php$PHP_VERSION-gettext zip unzip php$PHP_VERSION-zip \
-    jq openssh-client git rsync
+    php$PHP_VERSION-mysql php$PHP_VERSION-gettext php$PHP_VERSION-zip \
+    # SQL Server
+    freetds-common libsybdb5 \
+    # MySQL cli \
+    mysql-client \
+    # utils
+    pwgen jq openssh-client git rsync zip unzip
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \ 
     apt-get update && \
     apt-get install -y nodejs && \
     npm install -g --silent n && \
     n ${NODE_VERSION} && \
     PATH="$PATH" && \
-    npm -g i --unsafe-perm node-sass@$NODE_SASS_VERSION
+    # Node-sass and Sentry CLI
+    npm -g i --unsafe-perm --quiet node-sass@$NODE_SASS_VERSION @sentry/cli
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
-    unzip awscliv2.zip &&  ./aws/install && rm -rf ./aws awscliv2.zip && \
-    curl -fsSL https://get.docker.com -o get-docker.sh && sh get-docker.sh && rm get-docker.sh && \
-    apt-get install docker-compose-plugin
+    unzip awscliv2.zip &&  ./aws/install && rm -rf ./aws awscliv2.zip
 
 # Update CLI PHP to use $PHP_VERSION
 RUN ln -sfn /usr/bin/php$PHP_VERSION /etc/alternatives/php
@@ -49,10 +56,21 @@ COPY --from=composer:latest /usr/bin/composer /usr/local/bin/composer
 
 # phpunit
 RUN composer global require "phpunit/phpunit:~9.5" --prefer-dist --no-interaction && \
-    ln -s /root/.composer/vendor/bin/phpunit /usr/local/bin/phpunit
+    export PATH="$(composer config -g home)/vendor/bin:$PATH"
 
 # Add volumes for the app
 VOLUME [ "/app" ]
+
+# Docker
+
+ENV DOCKER_TLS_CERTDIR=/certs
+RUN mkdir /certs /certs/client && chmod 1777 /certs /certs/client
+
+# Get docker executables from official dind image
+COPY --from=docker:20.10.23 /usr/local/bin/ /usr/local/bin/
+COPY --from=docker:20.10.23 /usr/libexec/docker/cli-plugins /usr/libexec/docker/cli-plugins
+
+VOLUME /var/lib/docker
 
 # Clean up APT when done.
 RUN apt-get clean && \
