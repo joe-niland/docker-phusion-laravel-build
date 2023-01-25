@@ -19,9 +19,9 @@ ENV DEBIAN_FRONTEND=noninteractive \
 RUN add-apt-repository -y ppa:ondrej/php && \
     apt-get update && \
     apt-get -y upgrade -o Dpkg::Options::="--force-confold" -o Dpkg::Options::="--force-confdef" && \
-    apt-get -y -o Dpkg::Options::="--force-confold" install \
+    apt-get -y -o Dpkg::Options::="--force-confold" install --no-install-recommends \
     # docker
-    ca-certificates iptables openssl pigz xz-utils software-properties-common \
+    ca-certificates iptables openssl pigz xz-utils software-properties-common uidmap dbus-user-session \
     # php
     libpng-dev \
     php$PHP_VERSION-cli php$PHP_VERSION-common php$PHP_VERSION-apc \
@@ -44,6 +44,7 @@ RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
     npm -g i --unsafe-perm --quiet node-sass@$NODE_SASS_VERSION @sentry/cli
 RUN curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip" && \
     unzip awscliv2.zip &&  ./aws/install && rm -rf ./aws awscliv2.zip
+RUN  apt-get clean && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
 
 # Update CLI PHP to use $PHP_VERSION
 RUN ln -sfn /usr/bin/php$PHP_VERSION /etc/alternatives/php
@@ -67,12 +68,10 @@ ENV DOCKER_TLS_CERTDIR=/certs
 RUN mkdir /certs /certs/client && chmod 1777 /certs /certs/client
 
 # Get docker executables from official dind image
-COPY --from=docker:20.10.23 /usr/local/bin/ /usr/local/bin/
-COPY --from=docker:20.10.23 /usr/libexec/docker/cli-plugins /usr/libexec/docker/cli-plugins
+COPY --from=docker:20.10.23-dind /usr/local/bin/ /usr/local/bin/
+COPY --from=docker:20.10.23-dind /usr/libexec/docker/cli-plugins /usr/libexec/docker/cli-plugins
 
 VOLUME /var/lib/docker
 
-# Clean up APT when done.
-RUN apt-get clean && \
-    rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
-
+ENTRYPOINT ["dockerd-entrypoint.sh"]
+CMD []
