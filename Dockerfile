@@ -10,8 +10,6 @@ CMD ["/sbin/my_init"]
 
 ENV DEBIAN_FRONTEND=noninteractive \
     UCF_FORCE_CONFFNEW=1 \
-    NODE_VERSION=14 \
-    NODE_SASS_VERSION=6.0.1 \
     PHP_TIMEZONE=Australia\/Sydney \
     PHP_VERSION=7.3
 
@@ -26,6 +24,10 @@ RUN add-apt-repository -y ppa:ondrej/php && \
     php$PHP_VERSION-gd php$PHP_VERSION-xml php$PHP_VERSION-mbstring php$PHP_VERSION-curl php$PHP_VERSION-dev php$PHP_VERSION-sybase php$PHP_VERSION-gmp \
     freetds-common libsybdb5 php$PHP_VERSION-mysql php$PHP_VERSION-gettext zip unzip php$PHP_VERSION-zip \
     jq openssh-client
+
+ENV NODE_VERSION=18 \
+    NODE_SASS_VERSION=6.0.1
+
 RUN curl -sL https://deb.nodesource.com/setup_${NODE_VERSION}.x | bash && \
     apt-get update && \
     apt-get install -y nodejs && \
