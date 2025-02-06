@@ -1,7 +1,7 @@
 # Use phusion/baseimage as base image.
 # See https://github.com/phusion/baseimage-docker/blob/master/Changelog.md for
 # a list of version numbers.
-FROM phusion/baseimage:focal-1.2.0
+FROM phusion/baseimage:noble-1.0.0
 
 # Use baseimage-docker's init system.
 CMD ["/sbin/my_init"]
